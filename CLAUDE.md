@@ -14,11 +14,8 @@ Arcade Vault (`app/` uses the App Router, TypeScript, Tailwind CSS v4). Spanish-
 
 Per README.md, this project follows Spec Driven Design using the `/spec` and `/spec-impl` skills from https://github.com/Klerith/fernando-skills (installed via `npx skills@latest add Klerith/fernando-skills`). Look for spec files describing intended features before implementing.
 
-## Commands
-
-- `npm run dev` — start dev server (Turbopack)
-- `npm run build` — production build
-- `npm run start` — run production build
-- `npm run lint` — ESLint (flat config in `eslint.config.mjs`, extends `next/core-web-vitals` + `next/typescript`)
-
 No test runner is configured yet.
+
+## UI design
+
+Always use the `/frontend-design` skill when designing the user interface (new pages, components, or restyling existing UI).
