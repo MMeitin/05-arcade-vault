@@ -30,3 +30,35 @@ export interface SavedScore {
   name: string;
   at: number;
 }
+
+export interface Feature {
+  icon: "GAMEPAD" | "FREE" | "TROPHY" | "ROCKET";
+  title: string;
+  desc: string;
+  color: Accent;
+}
+
+export interface HomeStat {
+  n: string;
+  unit: string;
+  sub: string;
+}
+
+export interface RecentScore {
+  player: string;
+  game: string;
+  score: number;
+  when: string; // "hace 2 min"
+  color: Accent;
+}
+
+export interface TopPlayer {
+  rank: number;
+  player: string;
+  score: number;
+}
+
+export interface FaqItem {
+  q: string;
+  a: string;
+}
