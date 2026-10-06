@@ -193,7 +193,8 @@ a { color: inherit; text-decoration: none; }
 .av-nav .hamburger { display: none; }
 
 @media (max-width: 840px) {
-  .av-nav { padding: 12px 16px; }
+  .av-nav { padding: 12px 16px; gap: 12px; }
+  .av-nav .auth-btn { margin-left: 0; }
   .av-nav .links { display: none; }
   .av-nav .coin-counter { display: none; }
   .av-nav .hamburger { display: inline-flex; }
@@ -1227,3 +1228,6 @@ a { color: inherit; text-decoration: none; }
 /* Links usados como mini-card / lb-link en la Home */
 a.mini-card { display: block; }
 a.lb-link { display: inline-block; }
+
+/* Evita que el ticker ensanche el grid en móvil */
+.activity-grid > * { min-width: 0; }
