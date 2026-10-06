@@ -1223,3 +1223,7 @@ a { color: inherit; text-decoration: none; }
   .home-silos .silo, .hero-scroll .arrow, .tick-row { animation: none; }
   .tick-row { opacity: 1; }
 }
+
+/* Links usados como mini-card / lb-link en la Home */
+a.mini-card { display: block; }
+a.lb-link { display: inline-block; }

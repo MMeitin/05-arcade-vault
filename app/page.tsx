@@ -1,3 +1,5 @@
+import { HomePage } from "@/components/home/home-page";
+
 export default function Home() {
-  return <main className="page">Inicio</main>;
+  return <HomePage />;
 }
