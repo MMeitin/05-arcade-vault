@@ -1,6 +1,6 @@
 # SPEC 02 — Home (Inicio) y Biblioteca en ruta propia
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01
 > **Date:** 2026-10-06
 > **Objective:** Añadir la landing "Inicio" en `/` portada de `references/templates/home-about/` y mover la Biblioteca a `/biblioteca`.
