@@ -1,6 +1,6 @@
 # SPEC 02 — Home (Inicio) y Biblioteca en ruta propia
 
-> **Status:** Borrador
+> **Status:** Aprobado
 > **Depends on:** SPEC 01
 > **Date:** 2026-10-06
 > **Objective:** Añadir la landing "Inicio" en `/` portada de `references/templates/home-about/` y mover la Biblioteca a `/biblioteca`.
@@ -14,7 +14,7 @@ Hoy `/` abre directamente la Biblioteca. El prototipo `references/templates/home
 **Dentro:**
 
 - Pantalla Home en `/`, con las secciones de `home.jsx`:
-  - Hero: eyebrow "INSERTA UNA MONEDA_", título en 3 líneas, subtítulo, CTAs EXPLORAR JUEGOS (→ `/biblioteca`) y CREAR CUENTA (→ `/auth`), indicador "DESLIZA", 8 siluetas pixel flotantes.
+  - Hero: eyebrow "INSERTA UNA MONEDA\_", título en 3 líneas, subtítulo, CTAs EXPLORAR JUEGOS (→ `/biblioteca`) y CREAR CUENTA (→ `/auth`), indicador "DESLIZA", 8 siluetas pixel flotantes.
   - `// 01` ¿POR QUÉ ARCADE VAULT?: 4 feature cards con icono pixel (GAMEPAD, FREE, TROPHY, ROCKET).
   - `// 02` JUEGOS DISPONIBLES AHORA: rail de 6 mini-cards (`GAMES.slice(0, 6)`) → `/juegos/[id]`, botón VER TODOS LOS JUEGOS → `/biblioteca`.
   - Stats: 3 bloques (12+ JUEGOS, MILES DE PARTIDAS, GLOBAL RANKING).
@@ -76,14 +76,14 @@ Persistencia: no cambia (`av_user`, `av_scores` igual que en SPEC 01).
 
 ## Rutas resultantes
 
-| Ruta                | Pantalla                   | Cambio                    |
-| ------------------- | -------------------------- | ------------------------- |
-| `/`                 | Home (nueva)               | antes: Biblioteca         |
-| `/biblioteca`       | Biblioteca                 | nueva ruta                |
-| `/juegos/[id]`      | Detalle                    | solo enlace de vuelta     |
-| `/juegos/[id]/jugar`| Reproductor                | solo enlace de vuelta     |
-| `/salon`            | Salón de la Fama           | solo enlace de vuelta     |
-| `/auth`             | Auth                       | sin cambios (redirige a `/`) |
+| Ruta                 | Pantalla         | Cambio                       |
+| -------------------- | ---------------- | ---------------------------- |
+| `/`                  | Home (nueva)     | antes: Biblioteca            |
+| `/biblioteca`        | Biblioteca       | nueva ruta                   |
+| `/juegos/[id]`       | Detalle          | solo enlace de vuelta        |
+| `/juegos/[id]/jugar` | Reproductor      | solo enlace de vuelta        |
+| `/salon`             | Salón de la Fama | solo enlace de vuelta        |
+| `/auth`              | Auth             | sin cambios (redirige a `/`) |
 
 ## Plan de implementación
 
@@ -131,13 +131,13 @@ Antes de escribir código de cada paso: leer la guía relevante en `node_modules
 
 ## Riesgos
 
-| Riesgo                                                          | Mitigación                                                                      |
-| --------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Riesgo                                                          | Mitigación                                                                        |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | Enlaces a `/` olvidados que debían ir a Biblioteca              | Paso 3 + `grep` de `href="/"` y `push("/")` antes de cerrar; criterios lo cubren. |
-| `reveal` deja contenido invisible si falla el observer / sin JS | Wrapper cliente solo oculta tras montar; `prefers-reduced-motion` muestra todo. |
-| Colisión de clases `home-*` / `.top1` con las existentes        | Paso 5: comparar con `globals.css` antes de portar; no duplicar reglas.         |
-| Inconsistencia de nombres de Nav (Inicio vs logo)               | Ambos a `/`; criterio de link activo explícito.                                 |
-| `styles.css` de home-about difiere del actual en otras clases   | Portar solo las de landing; no sobrescribir las de SPEC 01.                     |
+| `reveal` deja contenido invisible si falla el observer / sin JS | Wrapper cliente solo oculta tras montar; `prefers-reduced-motion` muestra todo.   |
+| Colisión de clases `home-*` / `.top1` con las existentes        | Paso 5: comparar con `globals.css` antes de portar; no duplicar reglas.           |
+| Inconsistencia de nombres de Nav (Inicio vs logo)               | Ambos a `/`; criterio de link activo explícito.                                   |
+| `styles.css` de home-about difiere del actual en otras clases   | Portar solo las de landing; no sobrescribir las de SPEC 01.                       |
 
 ## Qué **no** está en esta spec
 
