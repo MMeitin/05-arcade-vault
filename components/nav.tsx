@@ -10,7 +10,7 @@ export function Nav() {
   const { user, logout } = useSession();
   const [open, setOpen] = useState(false);
 
-  type NavName = "inicio" | "biblioteca" | "salon" | "auth";
+  type NavName = "inicio" | "biblioteca" | "salon" | "acerca" | "auth";
   const isActive = (name: NavName) => {
     if (name === "inicio") return pathname === "/";
     if (name === "biblioteca")
@@ -39,6 +39,9 @@ export function Nav() {
           </Link>
           <Link href="/salon" className={cls("salon")}>
             Salón de la Fama
+          </Link>
+          <Link href="/acerca" className={cls("acerca")}>
+            Acerca de
           </Link>
         </div>
         <div className="spacer"></div>
@@ -83,6 +86,9 @@ export function Nav() {
         </Link>
         <Link href="/salon" className={cls("salon")} onClick={close}>
           Salón de la Fama
+        </Link>
+        <Link href="/acerca" className={cls("acerca")} onClick={close}>
+          Acerca de
         </Link>
         <Link href="/auth" className={cls("auth")} onClick={close}>
           {user ? "Cuenta" : "Iniciar Sesión"}
