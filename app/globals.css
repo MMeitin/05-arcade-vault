@@ -1308,3 +1308,14 @@ a.lb-link { display: inline-block; }
 .term-body .dim { color: var(--ink-dim); }
 .term-body .success { margin-top: 12px; color: var(--green); text-shadow: 0 0 6px rgba(0,255,136,0.45); font-weight: 700; white-space: pre-wrap; }
 .term-body .caret { animation: blink 1s steps(1) infinite; }
+
+/* Errores y honeypot del formulario de contacto (SPEC 03) */
+.contact-form .field.invalid input,
+.contact-form .field.invalid textarea { border-color: var(--magenta); }
+.field-error { margin: 0; font-size: 11px; letter-spacing: 0.04em; color: var(--magenta); }
+.form-error {
+  margin: 0 0 14px; padding: 10px 12px; font-size: 12px; line-height: 1.6;
+  color: var(--magenta); border: 1px solid var(--magenta); background: rgba(255,0,110,0.08);
+}
+.hp-field { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.btn:disabled { opacity: 0.6; cursor: wait; }
