@@ -80,3 +80,12 @@ export type ContactState =
       formError?: string;
       values: ContactInput; // para repoblar el form
     };
+
+export interface GameCanvasProps {
+  paused: boolean; // el reproductor manda; el motor se congela si true
+  onScore: (score: number) => void;
+  onLives: (lives: number) => void;
+  onLevel: (level: number) => void;
+  onGameOver: (finalScore: number) => void; // una sola vez por partida
+  onAutoPause: () => void; // pérdida de foco / pestaña oculta
+}
