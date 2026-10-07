@@ -31,6 +31,35 @@ const randInt = (min: number, max: number) => Math.floor(rand(min, max + 1));
 
 type Keys = Record<string, boolean | undefined>;
 
+// ── Tema (colores neón de la plataforma) ──────────────────────────────────────
+interface Theme {
+  ship: string;
+  asteroid: string;
+  bullet: string;
+  powerUp: string;
+  particle: string;
+  flame: string;
+}
+
+const readTheme = (el: HTMLElement): Theme => {
+  const style = getComputedStyle(el);
+  const v = (name: string, fallback: string) =>
+    style.getPropertyValue(name).trim() || fallback;
+  return {
+    ship: v("--cyan", "#00f5ff"),
+    asteroid: v("--ink", "#e6e9ff"),
+    bullet: v("--ink", "#e6e9ff"),
+    powerUp: v("--yellow", "#f5ff00"),
+    particle: v("--magenta", "#ff006e"),
+    flame: v("--yellow", "#f5ff00"),
+  };
+};
+
+const glow = (ctx: CanvasRenderingContext2D, color: string, blur: number) => {
+  ctx.shadowColor = color;
+  ctx.shadowBlur = blur;
+};
+
 // ── Bullet ────────────────────────────────────────────────────────────────────
 class Bullet {
   x: number;
@@ -56,8 +85,9 @@ class Bullet {
     if (this.ttl <= 0) this.dead = true;
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = "#fff";
+  draw(ctx: CanvasRenderingContext2D, theme: Theme) {
+    ctx.fillStyle = theme.bullet;
+    glow(ctx, theme.bullet, 8);
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();
@@ -113,11 +143,12 @@ class Asteroid {
     ];
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D, theme: Theme) {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.rot);
-    ctx.strokeStyle = "#fff";
+    ctx.strokeStyle = theme.asteroid;
+    glow(ctx, theme.asteroid, 10);
     ctx.lineWidth = 1.5;
     ctx.lineJoin = "round";
     ctx.beginPath();
@@ -156,18 +187,20 @@ class PowerUp {
     if (this.ttl <= 0) this.dead = true;
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D, theme: Theme) {
     if (this.ttl < 2 && Math.floor(this.ttl * 8) % 2 === 0) return;
     const pulse = 0.85 + Math.sin(performance.now() / 150) * 0.15;
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(Math.PI / 4);
-    ctx.strokeStyle = "#0ff";
+    ctx.strokeStyle = theme.powerUp;
+    glow(ctx, theme.powerUp, 14);
     ctx.lineWidth = 2;
     const r = this.radius * pulse;
     ctx.strokeRect(-r, -r, r * 2, r * 2);
     ctx.restore();
-    ctx.fillStyle = "#0ff";
+    ctx.fillStyle = theme.powerUp;
+    glow(ctx, theme.powerUp, 8);
     ctx.font = "bold 12px monospace";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -243,7 +276,7 @@ class Ship {
     return [new Bullet(ox, oy, this.angle)];
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D, theme: Theme) {
     if (this.dead) return;
     // Parpadeo durante invencibilidad de reaparición
     if (this.invincible > 0 && Math.floor(this.invincible * 8) % 2 === 0)
@@ -252,7 +285,8 @@ class Ship {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.angle);
-    ctx.strokeStyle = "#fff";
+    ctx.strokeStyle = theme.ship;
+    glow(ctx, theme.ship, 14);
     ctx.lineWidth = 1.5;
     ctx.lineJoin = "round";
 
@@ -271,7 +305,8 @@ class Ship {
       ctx.moveTo(-8, -4);
       ctx.lineTo(-8 - rand(6, 14), 0);
       ctx.lineTo(-8, 4);
-      ctx.strokeStyle = "rgba(255, 130, 0, 0.85)";
+      ctx.strokeStyle = theme.flame;
+      glow(ctx, theme.flame, 12);
       ctx.stroke();
     }
 
@@ -307,14 +342,17 @@ class Particle {
     if (this.ttl <= 0) this.dead = true;
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D, theme: Theme) {
     const alpha = this.ttl / this.life;
-    ctx.strokeStyle = `rgba(255,255,255,${alpha.toFixed(2)})`;
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = theme.particle;
+    glow(ctx, theme.particle, 6);
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(this.x, this.y);
     ctx.lineTo(this.x - this.vx * 0.05, this.y - this.vy * 0.05);
     ctx.stroke();
+    ctx.globalAlpha = 1;
   }
 }
 
@@ -327,6 +365,12 @@ export const createAsteroids = (
 ): AsteroidsHandle => {
   const ctx = canvas.getContext("2d");
   if (!ctx) return { setPaused: () => {}, destroy: () => {} };
+  const theme = readTheme(canvas);
+
+  // Buffer HiDPI: lógica fija 800×600, buffer escalado por devicePixelRatio
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  canvas.width = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
 
   // Input
   const keys: Keys = {};
@@ -493,20 +537,21 @@ export const createAsteroids = (
   };
 
   const draw = () => {
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, W, H);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
 
-    particles.forEach((p) => p.draw(ctx));
-    asteroids.forEach((a) => a.draw(ctx));
-    powerUps.forEach((p) => p.draw(ctx));
-    bullets.forEach((b) => b.draw(ctx));
-    ship.draw(ctx);
+    particles.forEach((p) => p.draw(ctx, theme));
+    asteroids.forEach((a) => a.draw(ctx, theme));
+    powerUps.forEach((p) => p.draw(ctx, theme));
+    bullets.forEach((b) => b.draw(ctx, theme));
+    ship.draw(ctx, theme);
 
     if (ship.tripleShot > 0) {
       ctx.font = "15px monospace";
       ctx.textAlign = "left";
       ctx.textBaseline = "alphabetic";
-      ctx.fillStyle = "#0ff";
+      ctx.fillStyle = theme.powerUp;
+      glow(ctx, theme.powerUp, 8);
       ctx.fillText(`3x  ${ship.tripleShot.toFixed(1)}s`, 14, 26);
     }
   };
