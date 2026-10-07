@@ -1,6 +1,6 @@
 # SPEC 05 — Juego ROCAS (Asteroids) integrado en el reproductor
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01, SPEC 02
 > **Date:** 2026-10-07
 > **Objective:** Portar el Asteroids de `references/templates/started-games/02-asteroids` a un motor TypeScript con canvas en React y montarlo en `/juegos/rocas/jugar` como primer juego real, con puntuación, vidas y nivel reflejados en el HUD de la plataforma y el fin de partida conectado al modal de guardado existente.
