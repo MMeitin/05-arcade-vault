@@ -62,3 +62,21 @@ export interface FaqItem {
   q: string;
   a: string;
 }
+
+export interface ContactInput {
+  name: string; // 1–60 chars, trim
+  email: string; // email válido, máx 120
+  message: string; // 1–2000 chars, trim
+}
+
+export type ContactField = keyof ContactInput;
+
+export type ContactState =
+  | { status: "idle" }
+  | { status: "success"; name: string }
+  | {
+      status: "error";
+      fieldErrors?: Partial<Record<ContactField, string>>;
+      formError?: string;
+      values: ContactInput; // para repoblar el form
+    };
