@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { GAMES, seededScores } from "@/lib/data";
+import { seededScores } from "@/lib/data";
+import { getGame } from "@/lib/games-repo";
 
-export default async function GameDetailPage(
-  props: PageProps<"/juegos/[id]">,
-) {
+export default async function GameDetailPage(props: PageProps<"/juegos/[id]">) {
   const { id } = await props.params;
-  const game = GAMES.find((g) => g.id === id);
+  const game = await getGame(id);
   if (!game) notFound();
 
   const scores = seededScores(id.length * 17 + 3, 10);

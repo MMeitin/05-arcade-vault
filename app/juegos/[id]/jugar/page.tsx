@@ -1,12 +1,10 @@
 import { notFound } from "next/navigation";
 import { GamePlayer } from "@/components/game-player";
-import { GAMES } from "@/lib/data";
+import { getGame } from "@/lib/games-repo";
 
-export default async function PlayPage(
-  props: PageProps<"/juegos/[id]/jugar">,
-) {
+export default async function PlayPage(props: PageProps<"/juegos/[id]/jugar">) {
   const { id } = await props.params;
-  const game = GAMES.find((g) => g.id === id);
+  const game = await getGame(id);
   if (!game) notFound();
 
   return <GamePlayer game={game} />;
