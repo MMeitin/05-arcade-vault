@@ -1,6 +1,6 @@
 # SPEC 06 — Catálogo de juegos y Leaderboard en Supabase
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01, SPEC 02, SPEC 04, SPEC 05
 > **Date:** 2026-10-07
 > **Objective:** Mover el catálogo de juegos (`GAMES`) y las puntuaciones a tablas de Supabase, de modo que el Salón de la Fama muestre el ranking real por juego y la Biblioteca, la Home y el Detalle lean el catálogo y sus `best`/`plays` de la base de datos.
@@ -14,7 +14,7 @@ Tras SPEC 04 el proyecto tiene clientes de Supabase pero ninguna tabla (`list_ta
 **Dentro:**
 
 - Migración SQL con:
-  - Tabla `games` (catálogo) sembrada con los 6 juegos actuales de `GAMES`.
+  - Tabla `games` (catálogo) sembrada con los 8 juegos actuales de `GAMES`.
   - Tabla `scores` (puntuaciones).
   - Vista `game_stats` con `best` (máx. puntuación) y `plays` (nº de partidas) por juego.
   - RLS en ambas tablas.
