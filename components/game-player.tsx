@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Game } from "@/lib/types";
+import { GAME_CANVASES } from "./games/registry";
 import { useSession } from "./session-provider";
 
 const LIVES = 3;
@@ -11,7 +12,12 @@ const fmt = (n: number) => n.toLocaleString("es-ES");
 
 export function GamePlayer({ game }: { game: Game }) {
   const { user, saveScore } = useSession();
+  // Juego real (canvas) o simulación; sin canvas el comportamiento no cambia
+  const Canvas = GAME_CANVASES[game.id];
   const [score, setScore] = useState(0);
+  const [engineLives, setEngineLives] = useState(LIVES);
+  const [engineLevel, setEngineLevel] = useState(1);
+  const [runId, setRunId] = useState(0);
   const [paused, setPaused] = useState(false);
   const [over, setOver] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -19,19 +25,23 @@ export function GamePlayer({ game }: { game: Game }) {
   const [nameEdit, setNameEdit] = useState<string | null>(null);
 
   const name = nameEdit ?? user?.name ?? "INVITADO";
-  const level = 1 + Math.floor(score / LEVEL_STEP);
+  const level = Canvas ? engineLevel : 1 + Math.floor(score / LEVEL_STEP);
+  const lives = Canvas ? engineLives : LIVES;
 
   useEffect(() => {
-    if (over || paused) return;
+    if (Canvas || over || paused) return;
     const t = setInterval(
       () => setScore((s) => s + Math.floor(10 + Math.random() * 90)),
       220,
     );
     return () => clearInterval(t);
-  }, [over, paused]);
+  }, [Canvas, over, paused]);
 
   const restart = () => {
     setScore(0);
+    setEngineLives(LIVES);
+    setEngineLevel(1);
+    setRunId((id) => id + 1);
     setPaused(false);
     setOver(false);
     setSaved(false);
@@ -58,7 +68,7 @@ export function GamePlayer({ game }: { game: Game }) {
           </div>
           <div className="hud-stat lives">
             <div className="l">Vidas</div>
-            <div className="v">{"♥ ".repeat(LIVES).trim() || "—"}</div>
+            <div className="v">{"♥ ".repeat(lives).trim() || "—"}</div>
           </div>
           <div className="hud-stat level">
             <div className="l">Nivel</div>
@@ -80,13 +90,28 @@ export function GamePlayer({ game }: { game: Game }) {
 
       <div className="crt">
         <div className="crt-screen">
-          <div className="game-arena">
-            <div className="grid-floor"></div>
-            <div className="enemy e1"></div>
-            <div className="enemy e2"></div>
-            <div className="enemy e3"></div>
-            <div className="player-ship"></div>
-          </div>
+          {Canvas ? (
+            <Canvas
+              key={runId}
+              paused={paused || over}
+              onScore={setScore}
+              onLives={setEngineLives}
+              onLevel={setEngineLevel}
+              onGameOver={(finalScore) => {
+                setScore(finalScore);
+                setOver(true);
+              }}
+              onAutoPause={() => setPaused(true)}
+            />
+          ) : (
+            <div className="game-arena">
+              <div className="grid-floor"></div>
+              <div className="enemy e1"></div>
+              <div className="enemy e2"></div>
+              <div className="enemy e3"></div>
+              <div className="player-ship"></div>
+            </div>
+          )}
           {paused && (
             <div
               className="crt-content"
