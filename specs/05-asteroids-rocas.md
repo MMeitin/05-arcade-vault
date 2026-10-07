@@ -35,6 +35,7 @@ El reproductor (`components/game-player.tsx`, SPEC 01) es una simulación: suma 
 - Migrar los demás juegos del catálogo (Tetris, Arkanoid, etc.).
 - Guardar puntuaciones en Supabase o alimentar `best`/`plays` del catálogo con datos reales (siguen mock).
 - Cambios en Nav, Home, Biblioteca, Detalle, Salón, Auth o Acerca.
+- Que el Salón lea `av_scores` (hoy usa solo datos mock; va en una spec propia).
 - Tests automatizados (no hay runner configurado).
 
 ## Modelo de datos
@@ -83,7 +84,7 @@ Máquina de estados interna (igual que el original): `playing → dead (2 s) →
 3. Añadir `GameCanvasProps` a `lib/types.ts` y crear `components/games/asteroids-canvas.tsx` (cliente: ref al canvas, `useEffect` que crea y destruye el motor con callbacks estables vía ref, segundo efecto para `paused`) y `components/games/registry.ts`. Verificar: `tsc` y `npm run lint` pasan; el montaje doble de React StrictMode no deja dos bucles.
 4. Modificar `components/game-player.tsx`: elegir `Canvas = GAME_CANVASES[game.id]`; con canvas real, `score/lives/level` provienen de los callbacks, el ticker aleatorio no corre, la arena falsa no se renderiza, `onGameOver` abre el modal, `onAutoPause` pausa, `paused || over` se pasa al canvas y `restart` incrementa un `runId` usado como `key`. Sin canvas real, comportamiento idéntico al actual. Verificar: `/juegos/caida/jugar` sigue mostrando la simulación; `/juegos/rocas/jugar` muestra el canvas.
 5. Actualizar `lib/data.ts` (descripción larga de ROCAS). Verificar: el detalle `/juegos/rocas` muestra el texto nuevo.
-6. Verificación manual en navegador (Playwright MCP o a mano): jugar, pausar, perder foco, FIN, perder las 3 vidas, guardar puntuación, JUGAR DE NUEVO, comprobar entrada en `/salon`. Verificar: criterios de aceptación.
+6. Verificación manual en navegador (Playwright MCP o a mano): jugar, pausar, perder foco, FIN, perder las 3 vidas, guardar puntuación, JUGAR DE NUEVO. Verificar: criterios de aceptación.
 7. Revisar responsive a 375 px, consola y `npm run lint` + `npm run build`. Verificar: sin scroll horizontal, sin errores.
 
 Antes de escribir código de cada paso: leer en `node_modules/next/dist/docs/` la guía de Client Components y la de `next/dynamic`/lazy loading si se usa. UI con skill `/frontend-design` (el paso 2 y los ajustes del reproductor).
@@ -99,7 +100,7 @@ Antes de escribir código de cada paso: leer en `node_modules/next/dist/docs/` l
 - [ ] Al limpiar todos los asteroides sube el Nivel del HUD y aparecen `3 + nivel` asteroides.
 - [ ] El módulo 3x aparece, se recoge, activa disparo triple 5 s y el canvas muestra el contador `3x N.Ns`.
 - [ ] PAUSA congela el juego sin perder estado y REANUDAR continúa; cambiar de pestaña o perder el foco pausa automáticamente.
-- [ ] Con 0 vidas se abre el modal FIN DEL JUEGO con la puntuación final; GUARDAR PUNTUACIÓN la escribe en `av_scores` con `game: "rocas"` y aparece en `/salon`.
+- [ ] Con 0 vidas se abre el modal FIN DEL JUEGO con la puntuación final; GUARDAR PUNTUACIÓN la escribe en `av_scores` con `game: "rocas"`.
 - [ ] El botón FIN abre el modal con la puntuación actual y detiene el juego; JUGAR DE NUEVO arranca una partida limpia (puntos 0, vidas 3, nivel 1) sin bucles duplicados.
 - [ ] Escribir en el input del modal (incluida la barra espaciadora) no dispara ni es bloqueado por el juego.
 - [ ] Colores neón de la plataforma (nave cian, power-up amarillo, partículas magenta) sobre fondo negro del CRT.
