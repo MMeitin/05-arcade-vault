@@ -1,6 +1,6 @@
 # SPEC 04 — Configuración base de Supabase
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 03
 > **Date:** 2026-10-07
 > **Objective:** Instalar el SDK de Supabase y dejar listos los clientes de navegador y servidor y el `proxy.ts` que refresca la sesión, sin cambiar ninguna pantalla.
