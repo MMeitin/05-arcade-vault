@@ -69,7 +69,7 @@ export const GAMES: Game[] = [
     id: "rocas",
     title: "ROCAS",
     short: "Pulveriza asteroides en gravedad cero.",
-    long: "Tu nave triangular flota en vacío absoluto. Dispara y rota para dividir rocas en fragmentos cada vez más pequeños. Cuidado con los OVNIs en el horizonte.",
+    long: "Tu nave triangular flota en vacío absoluto. Dispara y rota para dividir rocas en fragmentos cada vez más pequeños. Recoge el módulo 3x para disparar en triple durante 5 segundos.",
     cat: "SHOOTER",
     cover: "cover-rocas",
     color: "yellow",
@@ -109,9 +109,24 @@ export const CATS: ("TODOS" | Category)[] = [
 ];
 
 export const PLAYERS: string[] = [
-  "PX_KAI", "NEONFOX", "Z3R0COOL", "M00NRYU", "VAULT_07", "GLITCHA",
-  "ATARI_KID", "CYBER_LU", "MAGENTA88", "SCANLINE", "BIT_LORD", "ARKADYA",
-  "DROID_X", "RGB_QUEEN", "PIXEL_DAD", "RETROVIRA", "VECTORX", "JOY_STK",
+  "PX_KAI",
+  "NEONFOX",
+  "Z3R0COOL",
+  "M00NRYU",
+  "VAULT_07",
+  "GLITCHA",
+  "ATARI_KID",
+  "CYBER_LU",
+  "MAGENTA88",
+  "SCANLINE",
+  "BIT_LORD",
+  "ARKADYA",
+  "DROID_X",
+  "RGB_QUEEN",
+  "PIXEL_DAD",
+  "RETROVIRA",
+  "VECTORX",
+  "JOY_STK",
 ];
 
 export function seededScores(seed: number, count = 12): ScoreRow[] {
@@ -175,13 +190,55 @@ export const HOME_STATS: HomeStat[] = [
 ];
 
 export const RECENT_SCORES: RecentScore[] = [
-  { player: "NEONFOX", game: "Caída", score: 184220, when: "hace 2 min", color: "magenta" },
-  { player: "PX_KAI", game: "Glotón", score: 96400, when: "hace 5 min", color: "yellow" },
-  { player: "Z3R0COOL", game: "Invasores", score: 54190, when: "hace 8 min", color: "green" },
-  { player: "VAULT_07", game: "Rocas", score: 41200, when: "hace 12 min", color: "cyan" },
-  { player: "GLITCHA", game: "Bloque Buster", score: 28450, when: "hace 18 min", color: "cyan" },
-  { player: "ARKADYA", game: "Serpentina", score: 7820, when: "hace 24 min", color: "green" },
-  { player: "CYBER_LU", game: "Ranaria", score: 18900, when: "hace 31 min", color: "yellow" },
+  {
+    player: "NEONFOX",
+    game: "Caída",
+    score: 184220,
+    when: "hace 2 min",
+    color: "magenta",
+  },
+  {
+    player: "PX_KAI",
+    game: "Glotón",
+    score: 96400,
+    when: "hace 5 min",
+    color: "yellow",
+  },
+  {
+    player: "Z3R0COOL",
+    game: "Invasores",
+    score: 54190,
+    when: "hace 8 min",
+    color: "green",
+  },
+  {
+    player: "VAULT_07",
+    game: "Rocas",
+    score: 41200,
+    when: "hace 12 min",
+    color: "cyan",
+  },
+  {
+    player: "GLITCHA",
+    game: "Bloque Buster",
+    score: 28450,
+    when: "hace 18 min",
+    color: "cyan",
+  },
+  {
+    player: "ARKADYA",
+    game: "Serpentina",
+    score: 7820,
+    when: "hace 24 min",
+    color: "green",
+  },
+  {
+    player: "CYBER_LU",
+    game: "Ranaria",
+    score: 18900,
+    when: "hace 31 min",
+    color: "yellow",
+  },
 ];
 
 export const TOP_PLAYERS: TopPlayer[] = [
