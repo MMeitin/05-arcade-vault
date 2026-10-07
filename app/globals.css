@@ -782,6 +782,15 @@ a { color: inherit; text-decoration: none; }
 }
 .modal .input-row input:focus { border-color: var(--cyan); box-shadow: 0 0 10px rgba(0,245,255,0.35); }
 .modal .actions { display: flex; gap: 10px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+.modal .save-error {
+  margin: -2px 0 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--magenta);
+  text-shadow: 0 0 8px rgba(255,0,110,0.6);
+}
+.modal .input-row button:disabled { opacity: 0.6; cursor: wait; }
 .toast-saved {
   font-family: var(--pixel);
   font-size: 11px;
