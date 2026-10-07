@@ -2,18 +2,19 @@ import Link from "next/link";
 import {
   FAQ,
   FEATURES,
-  GAMES,
   HOME_STATS,
   PRICING_PERKS,
   RECENT_SCORES,
   TOP_PLAYERS,
 } from "@/lib/data";
+import { getGames } from "@/lib/games-repo";
 import { FeatureIcon } from "./feature-icon";
 import { MiniCard } from "./mini-card";
 import { Reveal } from "./reveal";
 import { Silhouettes } from "./silhouettes";
 
-export function HomePage() {
+export async function HomePage() {
+  const games = await getGames();
   return (
     <div className="home fade-in">
       {/* HERO */}
@@ -78,7 +79,7 @@ export function HomePage() {
           <div className="section-rule"></div>
         </div>
         <div className="mini-rail">
-          {GAMES.slice(0, 6).map((g) => (
+          {games.slice(0, 6).map((g) => (
             <MiniCard key={g.id} game={g} />
           ))}
         </div>
@@ -127,7 +128,9 @@ export function HomePage() {
                 >
                   <span className={"tk-p neon-" + r.color}>{r.player}</span>
                   <span className="tk-mid">▸ {r.game}</span>
-                  <span className="tk-s">+{r.score.toLocaleString("es-ES")}</span>
+                  <span className="tk-s">
+                    +{r.score.toLocaleString("es-ES")}
+                  </span>
                   <span className="tk-t">{r.when}</span>
                 </div>
               ))}
@@ -149,10 +152,18 @@ export function HomePage() {
                   key={r.player}
                   className={
                     "top-row" +
-                    (i === 0 ? " top1" : i === 1 ? " top2" : i === 2 ? " top3" : "")
+                    (i === 0
+                      ? " top1"
+                      : i === 1
+                        ? " top2"
+                        : i === 2
+                          ? " top3"
+                          : "")
                   }
                 >
-                  <span className="tp-rk">#{String(r.rank).padStart(2, "0")}</span>
+                  <span className="tp-rk">
+                    #{String(r.rank).padStart(2, "0")}
+                  </span>
                   <span className="tp-bar">
                     <span
                       className="tp-fill"
@@ -160,7 +171,9 @@ export function HomePage() {
                     ></span>
                   </span>
                   <span className="tp-p">{r.player}</span>
-                  <span className="tp-s">{r.score.toLocaleString("es-ES")}</span>
+                  <span className="tp-s">
+                    {r.score.toLocaleString("es-ES")}
+                  </span>
                 </div>
               ))}
             </div>

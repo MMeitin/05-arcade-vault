@@ -8,16 +8,16 @@ import {
   useMemo,
   useState,
 } from "react";
-import type { SavedScore, SessionUser } from "@/lib/types";
+import type { SessionUser } from "@/lib/types";
 
 const USER_KEY = "av_user";
-const SCORES_KEY = "av_scores";
+// Clave huérfana de versiones anteriores (SPEC 06): solo se elimina.
+const LEGACY_SCORES_KEY = "av_scores";
 
 interface SessionContextValue {
   user: SessionUser | null;
   login: (user: SessionUser) => void;
   logout: () => void;
-  saveScore: (entry: Omit<SavedScore, "at">) => void;
 }
 
 const SessionContext = createContext<SessionContextValue | null>(null);
@@ -27,6 +27,9 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<SessionUser | null>(null);
 
   useEffect(() => {
+    try {
+      localStorage.removeItem(LEGACY_SCORES_KEY);
+    } catch {}
     try {
       const raw = localStorage.getItem(USER_KEY);
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -48,20 +51,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   }, []);
 
-  const saveScore = useCallback((entry: Omit<SavedScore, "at">) => {
-    try {
-      const all: SavedScore[] = JSON.parse(
-        localStorage.getItem(SCORES_KEY) || "[]",
-      );
-      all.push({ ...entry, at: Date.now() });
-      localStorage.setItem(SCORES_KEY, JSON.stringify(all));
-    } catch {}
-  }, []);
-
-  const value = useMemo(
-    () => ({ user, login, logout, saveScore }),
-    [user, login, logout, saveScore],
-  );
+  const value = useMemo(() => ({ user, login, logout }), [user, login, logout]);
 
   return (
     <SessionContext.Provider value={value}>{children}</SessionContext.Provider>

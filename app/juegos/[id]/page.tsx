@@ -1,15 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { GAMES, seededScores } from "@/lib/data";
+import { getGame, getLeaderboard } from "@/lib/games-repo";
 
-export default async function GameDetailPage(
-  props: PageProps<"/juegos/[id]">,
-) {
+export default async function GameDetailPage(props: PageProps<"/juegos/[id]">) {
   const { id } = await props.params;
-  const game = GAMES.find((g) => g.id === id);
+  const game = await getGame(id);
   if (!game) notFound();
 
-  const scores = seededScores(id.length * 17 + 3, 10);
+  const scores = await getLeaderboard(id, 10);
 
   return (
     <div className="av-detail fade-in">
@@ -70,6 +68,12 @@ export default async function GameDetailPage(
       <aside>
         <div className="leaderboard">
           <h3>MEJORES PUNTUACIONES</h3>
+          {scores.length === 0 && (
+            <div className="hall-empty">
+              <div className="pixel">SIN PUNTUACIONES AÚN</div>
+              <p>Nadie ha puntuado en {game.title}. Sé el primero.</p>
+            </div>
+          )}
           {scores.map((r, i) => (
             <div
               key={r.rank}

@@ -1,20 +1,53 @@
-"use client";
-
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { GAMES, seededScores } from "@/lib/data";
-import { useSession } from "./session-provider";
+import type { Game, ScoreRow } from "@/lib/types";
 
 const fmt = (n: number) => n.toLocaleString("es-ES");
 
-export function HallOfFame() {
-  const { user } = useSession();
-  const [tab, setTab] = useState(GAMES[0].id);
-  const rows = useMemo(() => seededScores(tab.length * 23 + 7, 12), [tab]);
-  const game = GAMES.find((g) => g.id === tab)!;
-  const youRank = 8 + (tab.length % 4);
-  const youScore = rows[5].score - 2400;
+function PodiumSlot({
+  row,
+  place,
+  className,
+  champion,
+}: {
+  row?: ScoreRow;
+  place: string;
+  className: string;
+  champion?: boolean;
+}) {
+  return (
+    <div className={"podium-slot " + className}>
+      {champion && (
+        <div
+          className="pixel"
+          style={{ fontSize: 9, color: "var(--gold)", letterSpacing: "0.18em" }}
+        >
+          CAMPEÓN
+        </div>
+      )}
+      <div
+        className="rank-num"
+        style={champion ? { fontSize: 36, marginTop: 4 } : undefined}
+      >
+        {place}
+      </div>
+      <div className="name">{row ? row.name : "—"}</div>
+      <div className="score" style={champion ? { fontSize: 20 } : undefined}>
+        {row ? fmt(row.score) : "—"}
+      </div>
+      <div className="date">{row ? row.date : " "}</div>
+    </div>
+  );
+}
 
+export function HallOfFame({
+  games,
+  active,
+  rows,
+}: {
+  games: Game[];
+  active: Game;
+  rows: ScoreRow[];
+}) {
   return (
     <div className="av-hall fade-in">
       <div className="hall-head">
@@ -24,51 +57,24 @@ export function HallOfFame() {
         </p>
       </div>
 
-      <div className="hall-tabs">
-        {GAMES.map((g) => (
-          <button
+      <nav className="hall-tabs" aria-label="Juegos">
+        {games.map((g) => (
+          <Link
             key={g.id}
-            className={"chip" + (tab === g.id ? " active" : "")}
-            onClick={() => setTab(g.id)}
+            href={`/salon?juego=${g.id}`}
+            className={"chip" + (active.id === g.id ? " active" : "")}
+            aria-current={active.id === g.id ? "page" : undefined}
+            scroll={false}
           >
             {g.title}
-          </button>
+          </Link>
         ))}
-      </div>
+      </nav>
 
       <div className="podium">
-        <div className="podium-slot silver">
-          <div className="rank-num">02</div>
-          <div className="name">{rows[1].name}</div>
-          <div className="score">{fmt(rows[1].score)}</div>
-          <div className="date">{rows[1].date}</div>
-        </div>
-        <div className="podium-slot gold">
-          <div
-            className="pixel"
-            style={{
-              fontSize: 9,
-              color: "var(--gold)",
-              letterSpacing: "0.18em",
-            }}
-          >
-            CAMPEÓN
-          </div>
-          <div className="rank-num" style={{ fontSize: 36, marginTop: 4 }}>
-            01
-          </div>
-          <div className="name">{rows[0].name}</div>
-          <div className="score" style={{ fontSize: 20 }}>
-            {fmt(rows[0].score)}
-          </div>
-          <div className="date">{rows[0].date}</div>
-        </div>
-        <div className="podium-slot bronze">
-          <div className="rank-num">03</div>
-          <div className="name">{rows[2].name}</div>
-          <div className="score">{fmt(rows[2].score)}</div>
-          <div className="date">{rows[2].date}</div>
-        </div>
+        <PodiumSlot row={rows[1]} place="02" className="silver" />
+        <PodiumSlot row={rows[0]} place="01" className="gold" champion />
+        <PodiumSlot row={rows[2]} place="03" className="bronze" />
       </div>
 
       <div className="hall-table">
@@ -78,45 +84,30 @@ export function HallOfFame() {
           <div>PUNTUACIÓN</div>
           <div>FECHA</div>
         </div>
-        {rows.map((r, i) => (
-          <div
-            key={r.rank}
-            className={
-              "tr" + (i === 0 ? " top1" : i === 1 ? " top2" : i === 2 ? " top3" : "")
-            }
-            style={{ animationDelay: `${i * 50}ms` }}
-          >
-            <div className="rk">#{String(r.rank).padStart(2, "0")}</div>
-            <div className="pl">{r.name}</div>
-            <div className="sc">{fmt(r.score)}</div>
-            <div className="dt">{r.date}</div>
+        {rows.length === 0 ? (
+          <div className="hall-empty">
+            <div className="pixel">SIN PUNTUACIONES AÚN</div>
+            <p>Nadie ha puntuado en {active.title}. Sé el primero.</p>
+            <Link href={`/juegos/${active.id}/jugar`} className="btn yellow">
+              JUGAR {active.title}
+            </Link>
           </div>
-        ))}
-        {user && (
-          <>
-            <div className="tr you-label">▸ TU MEJOR MARCA EN {game.title}</div>
+        ) : (
+          rows.map((r, i) => (
             <div
-              className="tr you"
-              style={{ animationDelay: `${rows.length * 50 + 50}ms` }}
+              key={r.rank}
+              className={
+                "tr" +
+                (i === 0 ? " top1" : i === 1 ? " top2" : i === 2 ? " top3" : "")
+              }
+              style={{ animationDelay: `${i * 50}ms` }}
             >
-              <div className="rk" style={{ color: "var(--yellow)" }}>
-                #{String(youRank).padStart(2, "0")}
-              </div>
-              <div className="pl" style={{ color: "var(--yellow)" }}>
-                {user.name}
-              </div>
-              <div
-                className="sc"
-                style={{
-                  color: "var(--yellow)",
-                  textShadow: "0 0 6px rgba(245,255,0,0.5)",
-                }}
-              >
-                {fmt(youScore || 9999)}
-              </div>
-              <div className="dt">11/05/2026</div>
+              <div className="rk">#{String(r.rank).padStart(2, "0")}</div>
+              <div className="pl">{r.name}</div>
+              <div className="sc">{fmt(r.score)}</div>
+              <div className="dt">{r.date}</div>
             </div>
-          </>
+          ))
         )}
       </div>
 

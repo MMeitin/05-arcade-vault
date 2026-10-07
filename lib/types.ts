@@ -24,13 +24,6 @@ export interface SessionUser {
   name: string; // máx 10 chars, mayúsculas
 }
 
-export interface SavedScore {
-  game: string;
-  score: number;
-  name: string;
-  at: number;
-}
-
 export interface Feature {
   icon: "GAMEPAD" | "FREE" | "TROPHY" | "ROCKET";
   title: string;

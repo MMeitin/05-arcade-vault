@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { submitScore } from "@/lib/scores";
 import type { Game } from "@/lib/types";
 import { GAME_CANVASES } from "./games/registry";
 import { useSession } from "./session-provider";
@@ -11,7 +12,7 @@ const LEVEL_STEP = 2500;
 const fmt = (n: number) => n.toLocaleString("es-ES");
 
 export function GamePlayer({ game }: { game: Game }) {
-  const { user, saveScore } = useSession();
+  const { user } = useSession();
   // Juego real (canvas) o simulación; sin canvas el comportamiento no cambia
   const Canvas = GAME_CANVASES[game.id];
   const [score, setScore] = useState(0);
@@ -21,6 +22,8 @@ export function GamePlayer({ game }: { game: Game }) {
   const [paused, setPaused] = useState(false);
   const [over, setOver] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   // null = sin editar: sigue al usuario de sesión (que se hidrata tras el montaje)
   const [nameEdit, setNameEdit] = useState<string | null>(null);
 
@@ -45,11 +48,18 @@ export function GamePlayer({ game }: { game: Game }) {
     setPaused(false);
     setOver(false);
     setSaved(false);
+    setSaving(false);
+    setSaveError(null);
   };
 
-  const save = () => {
-    saveScore({ game: game.id, score, name });
-    setSaved(true);
+  const save = async () => {
+    if (saving) return;
+    setSaving(true);
+    setSaveError(null);
+    const res = await submitScore({ game: game.id, score, name });
+    setSaving(false);
+    if (res.ok) setSaved(true);
+    else setSaveError(res.error);
   };
 
   return (
@@ -150,18 +160,34 @@ export function GamePlayer({ game }: { game: Game }) {
             <div className="final-label">PUNTUACIÓN FINAL</div>
             <div className="final">{fmt(score)}</div>
             {!saved ? (
-              <div className="input-row">
-                <input
-                  value={name}
-                  onChange={(e) =>
-                    setNameEdit(e.target.value.toUpperCase().slice(0, 10))
-                  }
-                  placeholder="TUS INICIALES"
-                />
-                <button className="btn yellow" onClick={save}>
-                  GUARDAR PUNTUACIÓN
-                </button>
-              </div>
+              <>
+                <div className="input-row">
+                  <input
+                    value={name}
+                    onChange={(e) =>
+                      setNameEdit(e.target.value.toUpperCase().slice(0, 10))
+                    }
+                    placeholder="TUS INICIALES"
+                    disabled={saving}
+                  />
+                  <button
+                    className="btn yellow"
+                    onClick={save}
+                    disabled={saving}
+                  >
+                    {saving
+                      ? "GUARDANDO…"
+                      : saveError
+                        ? "REINTENTAR"
+                        : "GUARDAR PUNTUACIÓN"}
+                  </button>
+                </div>
+                {saveError && (
+                  <div className="save-error" role="alert">
+                    {saveError}
+                  </div>
+                )}
+              </>
             ) : (
               <div className="toast-saved">▸ PUNTUACIÓN GUARDADA_</div>
             )}
